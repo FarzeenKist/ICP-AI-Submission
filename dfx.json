@@ -11,6 +11,16 @@
       "type": "custom",
       "wasm": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity_dev.wasm.gz"
     },
+    "ledger_canister": {
+      "type": "custom",
+      "candid": "https://raw.githubusercontent.com/dfinity/ic/ca5e5052886de781021506814d2c6502e375da48/rs/rosetta-api/icp_ledger/ledger.did",
+      "wasm": "https://download.dfinity.systems/ic/ca5e5052886de781021506814d2c6502e375da48/canisters/ledger-canister.wasm.gz",
+      "remote": {
+        "id": {
+          "ic": "ryjl3-tyaaa-aaaaa-aaaba-cai"
+        }
+      }
+    },
     "submission_backend": {
       "build": "npx azle submission_backend",
       "candid": "src/submission_backend/submission_backend.did",
