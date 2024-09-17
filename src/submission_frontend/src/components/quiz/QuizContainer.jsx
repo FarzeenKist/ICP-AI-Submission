@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import QuestionCard from "./QuestionCard";
 
-const QuizContainer = ({ quizzes, updateAnswers, over, endQuiz }) => {
+const QuizContainer = ({ quiz, updateAnswers, over, endQuiz }) => {
   return (
     <div className="p-8 lg:w-full mx-auto min-h-screen max-w-lg lg:max-w-lg xl:max-w-xl">
-      {quizzes.map((quiz, index) => (
+      {quiz.questions.map((quiz, index) => (
         <QuestionCard
           key={index} // Using index as key for simplicity; ideally, use a unique ID
           correctAnswer={quiz.correctAnswer}

@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useState } from "react";
-import { submission_backend } from "declarations/submission_backend";
 import Cover from "./components/utils/Cover";
 import Loader from "./components/utils/Loader";
 import { toast } from "react-toastify";
@@ -11,86 +10,41 @@ import {
 import QuizContainer from "./components/quiz/QuizContainer";
 import QuizForm from "./components/quiz/QuizForm";
 import { generateQuiz } from "./utils/quiz";
-import { getAccount as fetchAccount, createQuiz as saveQuiz, submitAnswers } from "./utils/quizCanister";
+import {
+  getAccount,
+  hasAccount,
+  createAccount,
+  createQuiz as saveQuiz,
+  submitAnswers,
+} from "./utils/quizCanister";
 import { login, logout as destroy } from "./utils/auth";
 import Navbar from "./components/ui/Navbar";
+import { balance as fetchBalance } from "./utils/ledger";
 
-const parsedMockQuiz = [
-  {
-    question: "What is the capital of France?",
-    options: [
-      { id: "a", text: "Berlin" },
-      { id: "b", text: "Madrid" },
-      { id: "c", text: "Paris" },
-      { id: "d", text: "Rome" },
-    ],
-    correctAnswer: "c",
-  },
-  {
-    question: "Which element has the atomic number 1?",
-    options: [
-      { id: "a", text: "Helium" },
-      { id: "b", text: "Hydrogen" },
-      { id: "c", text: "Oxygen" },
-      { id: "d", text: "Nitrogen" },
-    ],
-    correctAnswer: "b",
-  },
-  {
-    question: "Who wrote 'Pride and Prejudice'?",
-    options: [
-      { id: "a", text: "Charles Dickens" },
-      { id: "b", text: "Emily Bronte" },
-      { id: "c", text: "Jane Austen" },
-      { id: "d", text: "Mark Twain" },
-    ],
-    correctAnswer: "c",
-  },
-  {
-    question: "What is the largest planet in the solar system?",
-    options: [
-      { id: "a", text: "Earth" },
-      { id: "b", text: "Mars" },
-      { id: "c", text: "Jupiter" },
-      { id: "d", text: "Venus" },
-    ],
-    correctAnswer: "c",
-  },
-  {
-    question: "What year did World War II end?",
-    options: [
-      { id: "a", text: "1942" },
-      { id: "b", text: "1945" },
-      { id: "c", text: "1939" },
-      { id: "d", text: "1944" },
-    ],
-    correctAnswer: "b",
-  },
-];
 function App() {
   const [quiz, setQuiz] = useState();
   const [account, setAccount] = useState();
   const [loading, setLoading] = useState(false);
   const [playing, setPlaying] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(window.auth?.isAuthenticated);
+  const [isLoggedIn, setIsLoggedIn] = useState(window.auth.isAuthenticated);
   const [answers, setAnswers] = useState([]);
+  const [balance, setBalance] = useState("0");
 
-  const getAccount = useCallback(async () => {
-    try {
-      setAccount(await fetchAccount());
-    } catch (error) {
-      console.log({ error });
+  const getBalance = useCallback(async () => {
+    if (isLoggedIn) {
+      setBalance(await fetchBalance());
     }
   });
+
   const createQuiz = async (quizConfiguration) => {
     try {
-      // setLoading(true);
-      // const quizResponse = await generateQuiz(
-      //   quizConfiguration.topic,
-      //   quizConfiguration.difficulty,
-      //   quizConfiguration.questionsAmount
-      // );
-      const quizResponse = parsedMockQuiz;
+      setLoading(true);
+      const quizResponse = await generateQuiz(
+        true,
+        quizConfiguration.topic,
+        quizConfiguration.difficulty,
+        quizConfiguration.questionsAmount
+      );
       const quiz = await saveQuiz(quizResponse);
       console.log(quiz);
       setQuiz(quiz.Ok);
@@ -107,7 +61,7 @@ function App() {
   };
   const endQuiz = async () => {
     try {
-      if (answers.length !== quiz.length) {
+      if (answers.length !== quiz.questions.length) {
         toast.warn(
           "All questions needs to be answered before you can end the quiz.",
           {
@@ -123,7 +77,9 @@ function App() {
         return;
       }
       setLoading(true);
+      console.log(answers);
       const response = await submitAnswers(quiz.id, answers);
+      console.log(response);
       if (response.Err) {
         console.log(response.Err);
         toast(
@@ -132,11 +88,7 @@ function App() {
         return;
       }
       setQuiz(response.Ok);
-      toast(
-        <NotificationSuccess
-          text={`Quiz has ended. You have successfully answered ${numCorrectAnswers} out of ${quiz.length} questions.`}
-        />
-      );
+      toast(<NotificationSuccess text={`Quiz has ended.`} />);
     } catch (error) {
       console.log({ error });
       toast(
@@ -146,6 +98,38 @@ function App() {
       setLoading(false);
     }
   };
+  const fetchAccount = useCallback(async () => {
+    try {
+      const isRegistered = await hasAccount();
+      console.log(isRegistered);
+      if (isRegistered) {
+        setAccount(await getAccount());
+      } else {
+        const response = await createAccount();
+        if (response.Err) {
+          throw response.Err;
+        }
+        setAccount(response.Ok);
+      }
+    } catch (error) {
+      console.log({ error });
+      toast(
+        <NotificationError text={`Failed to fetch account. ${error.message}`} />
+      );
+    } finally {
+      setLoading(false);
+    }
+  });
+
+  useEffect(() => {
+    fetchAccount();
+  }, [isLoggedIn]);
+  useEffect(() => {
+    console.log(account);
+  }, [account]);
+  useEffect(() => {
+    getBalance();
+  }, [getBalance]);
 
   const updateAnswers = (questionId, selectedOption) => {
     console.log(questionId, selectedOption);
@@ -173,8 +157,8 @@ function App() {
   }, [answers]);
 
   useEffect(() => {
-    getAccount()
-  }, [quiz])
+    fetchAccount();
+  }, [quiz]);
 
   return (
     <main className="bg-[#f5f5dc]">
@@ -182,7 +166,7 @@ function App() {
       {!loading && isLoggedIn ? (
         <Navbar
           principal={window.auth.principalText}
-          balance={100}
+          balance={balance}
           symbol={"ICP"}
           isAuthenticated={isLoggedIn}
           destroy={destroy}

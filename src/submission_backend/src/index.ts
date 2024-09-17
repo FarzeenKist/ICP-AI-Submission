@@ -19,6 +19,7 @@ import {
     Canister,
     Duration,
     nat,
+    nat8,
 } from "azle";
 import {
     ICRC,
@@ -51,7 +52,7 @@ const Quiz = Record({
     rewarded: bool
 });
 const SubmittedAnswer = Record({
-    id: text,
+    id: nat8,
     answer: text
 });
 const Account = Record({
@@ -75,7 +76,7 @@ const accountsStorage = StableBTreeMap(1, Principal, Account);
 
 let icrc: typeof ICRC = ICRC(Principal.fromText("ryjl3-tyaaa-aaaaa-aaaba-cai"));
 
-const REWARD_AMOUNT = 120n; // in seconds
+const REWARD_AMOUNT = 1 * 10**8; // in seconds
 
 export default Canister({
     // This function is used to fetch the quiz data of the a quiz.
@@ -97,6 +98,9 @@ export default Canister({
             return Err({ NotFound: `Account with id=${caller} not found` });
         }
         return Ok(accountOpt.Some);
+    }),
+    hasAccount: query([], bool, () => {
+        return accountsStorage.containsKey(ic.caller());
     }),
     createAccount: update([], Result(Account, Message), () => {
         const caller = ic.caller();
@@ -167,11 +171,12 @@ export default Canister({
         }
         let numCorrectAnswers = 0;
         submittedAnswers.forEach((answer) => {
-            quiz.questions[answer.id].submittedAnswerId = answer.id
+            quiz.questions[answer.id].submittedAnswerId = Some(answer.answer)
             if (quiz.questions[answer.id].correctAnswer === answer.answer) {
                 numCorrectAnswers++;
             }
         });
+        console.log(numCorrectAnswers)
         if (numCorrectAnswers === quiz.questions.length) {
             // reward users
             let transferArgs = {

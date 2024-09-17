@@ -18,6 +18,17 @@ export async function getAccount() {
     return [];
   }
 }
+export async function hasAccount() {
+  try {
+    return await window.canister.quiz.hasAccount();
+  } catch (err) {
+    if (err.name === "AgentHTTPResponseError") {
+      const authClient = window.auth.client;
+      await authClient.logout();
+    }
+    return [];
+  }
+}
 export async function getQuiz(quizId) {
   try {
     let result = await window.canister.quiz.getQuiz(quizId);

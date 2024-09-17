@@ -40,15 +40,14 @@ const Wallet = ({ principal, balance, symbol, isAuthenticated, destroy }) => {
             >
               <div className="px-4 py-2 text-sm text-gray-700">
                 <div className="flex items-center space-x-2">
-                  <i className="bi bi-person-circle text-xl" />
                   <span className="font-mono">{`${principal.slice(0, 5)}...${principal.slice(-3)}`}</span>
                 </div>
               </div>
 
               <div className="px-4 py-2 text-sm text-gray-700">
-                <div className="flex items-center text-sm space-x-2">
-                  <span>Balance: {balance}</span>
-                  <span className="ml-1">{symbol}</span>
+                <div className="flex items-center space-x-2">
+                  <span className="font-mono">Balance: {balance}</span>
+                  <span className="font-mono">{symbol}</span>
                 </div>
               </div>
 
@@ -56,13 +55,12 @@ const Wallet = ({ principal, balance, symbol, isAuthenticated, destroy }) => {
 
               <button
                 type="button"
-                className="w-full px-4 py-2 text-sm text-gray-700 flex items-center space-x-2 hover:bg-gray-100"
+                className="w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                 onClick={() => {
                   destroy();
                 }}
               >
-                <i className="bi bi-box-arrow-right text-xl" />
-                <span>Logout</span>
+                <span className="">Logout</span>
               </button>
             </div>
           )}
