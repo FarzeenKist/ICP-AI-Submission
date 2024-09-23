@@ -29,6 +29,9 @@ This repository contains a decentralized application (DApp) that allows users to
    npm install
    ```
 
+3. You need to add your Cohere AI token in the `quiz.js` file found in `src/submission_frontend/src/utils/quiz.js` to enable AI-powered features.
+
+
 ### Running the Application
 
 To deploy all canisters, follow these steps:
