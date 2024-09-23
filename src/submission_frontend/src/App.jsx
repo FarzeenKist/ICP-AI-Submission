@@ -144,9 +144,6 @@ function App() {
       }
     } catch (error) {
       console.log({ error });
-      toast(
-        <NotificationError text={`Failed to fetch account. ${error.message}`} />
-      );
     } finally {
       setLoading(false);
     }
