@@ -17,13 +17,15 @@ function QuestionCard({ question, options, correctAnswer, questionId, over, upda
             key={`question-${questionId}-${option.id}`}
             className={`text-sm p-3 border rounded-lg cursor-pointer shadow-md transition-transform duration-300 ease-in-out
               ${
+                // If the quiz is over and this option is the correct answer, highlight it in green. If the quiz is still ongoing and the option is selected, highlight it in blue
                 over && correctAnswer === option.id
-                  ? "border-green-500 bg-green-100" // Apply this only once for correct answer
+                  ? "border-green-500 bg-green-100"
                   : selectedOption === option.id
                   ? "border-blue-300 bg-blue-100 transform scale-105"
                   : ""
               }
               ${
+                // If the quiz is over and the selected option was incorrect, highlight it in red to indicate to the user that their answer for this option is wrong.
                 over &&
                 selectedOption === option.id &&
                 selectedOption !== correctAnswer

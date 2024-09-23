@@ -1,6 +1,4 @@
 import React from "react";
-// import PropTypes from "prop-types";
-// import { Button } from "react-bootstrap";
 import QuizzImg from "../../../src/assets/Quiz.png"
 const Cover = ({ title, login }) => {
   if ((title, login)) {
@@ -31,12 +29,5 @@ const Cover = ({ title, login }) => {
   return null;
 };
 
-// Cover.propTypes = {
-//   title: PropTypes.string,
-// };
-
-// Cover.defaultProps = {
-//   title: "",
-// };
 
 export default Cover;

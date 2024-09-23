@@ -30,17 +30,24 @@ function App() {
   const [answers, setAnswers] = useState([]);
   const [balance, setBalance] = useState("0");
 
+  const testing = false;
+
+  // Function to get the user's balance if they are logged in
   const getBalance = useCallback(async () => {
     if (isLoggedIn) {
       setBalance(await fetchBalance());
     }
   });
 
+  // Function to create a quiz based on user-provided configuration
+  // It generates a quiz, saves it, and sets the playing state to true
+  // Displays success or error notifications depending on the result
+  // Finally, loading state is reset after operation
   const createQuiz = async (quizConfiguration) => {
     try {
       setLoading(true);
       const quizResponse = await generateQuiz(
-        true,
+        testing,
         quizConfiguration.topic,
         quizConfiguration.difficulty,
         quizConfiguration.questionsAmount
@@ -59,8 +66,11 @@ function App() {
       setLoading(false);
     }
   };
+
+  // Function to end the quiz
   const endQuiz = async () => {
     try {
+      // Display a warning notification if not all the questions have been answered
       if (answers.length !== quiz.questions.length) {
         toast.warn(
           "All questions needs to be answered before you can end the quiz.",
@@ -70,6 +80,7 @@ function App() {
         );
         return;
       }
+      // Users can only end a quiz once
       if (quiz.over) {
         toast.warn("Quiz has already ended.", {
           className: "bg-[#e0ebeb] text-[#2c3e50] p-4 rounded-lg shadow-lg",
@@ -77,9 +88,8 @@ function App() {
         return;
       }
       setLoading(true);
-      console.log(answers);
       const response = await submitAnswers(quiz.id, answers);
-      console.log(response);
+      // Display an error notification if users failed to end the quiz
       if (response.Err) {
         console.log(response.Err);
         toast(
@@ -98,6 +108,7 @@ function App() {
       setLoading(false);
     }
   };
+  // Function to reset the state and play another quiz
   const playAgain = async () => {
     try {
       if (!quiz.over) {
@@ -108,8 +119,8 @@ function App() {
       }
       setLoading(true);
       setQuiz([]);
-      setAnswers([])
-      setPlaying(false)
+      setAnswers([]);
+      setPlaying(false);
     } catch (error) {
       console.log({ error });
       toast(
@@ -152,6 +163,8 @@ function App() {
     getBalance();
   }, [getBalance]);
 
+  // Function to update the user's answers for a given question
+  // Checks if the answer already exists and either updates or adds the answer
   const updateAnswers = (questionId, selectedOption) => {
     const exists = answers.findIndex((answer) => answer.id === questionId);
     if (exists > -1) {

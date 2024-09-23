@@ -6,7 +6,7 @@ const QuizContainer = ({ quiz, updateAnswers, over, endQuiz, playAgain, answers 
     <div className="p-8 lg:w-full mx-auto min-h-screen max-w-lg lg:max-w-lg xl:max-w-xl">
       {quiz.questions.map((question, index) => (
         <QuestionCard
-          key={index} // Using index as key for simplicity; ideally, use a unique ID
+          key={index}
           correctAnswer={question.correctAnswer}
           question={question.question}
           options={question.options}

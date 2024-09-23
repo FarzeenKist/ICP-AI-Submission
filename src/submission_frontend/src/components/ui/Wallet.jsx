@@ -4,7 +4,6 @@ const Wallet = ({ principal, balance, symbol, isAuthenticated, destroy }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleDropdown = () => {
-    console.log;
     setIsOpen(!isOpen);
   };
   if (isAuthenticated) {
