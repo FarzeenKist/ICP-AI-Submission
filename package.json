@@ -3,6 +3,7 @@
     "node": ">=16.0.0",
     "npm": ">=7.0.0"
   },
+  "private": true,
   "name": "submission",
   "scripts": {
     "build": "npm run build --workspaces --if-present",
@@ -15,9 +16,5 @@
   "workspaces": [
     "src/submission_backend",
     "src/submission_frontend"
-  ],
-  "dependencies": {
-    "@dfinity/auth-client": "^2.1.1",
-    "cohere-ai": "^7.13.1"
-  }
+  ]
 }
