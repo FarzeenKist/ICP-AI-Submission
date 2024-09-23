@@ -22,8 +22,7 @@ import {
     nat8,
 } from "azle";
 import {
-    ICRC,
-    TransferResult
+    ICRC
 } from "azle/canisters/icrc";
 import { hexAddressFromPrincipal } from "azle/canisters/ledger";
 //@ts-ignore
@@ -76,7 +75,7 @@ const accountsStorage = StableBTreeMap(1, Principal, Account);
 
 let icrc: typeof ICRC = ICRC(Principal.fromText("ryjl3-tyaaa-aaaaa-aaaba-cai"));
 
-const REWARD_AMOUNT = 1 * 10**8; // in seconds
+const REWARD_AMOUNT = BigInt(1 * 10**8);
 
 export default Canister({
     // This function is used to fetch the quiz data of the a quiz.
@@ -176,7 +175,6 @@ export default Canister({
                 numCorrectAnswers++;
             }
         });
-        console.log(numCorrectAnswers)
         if (numCorrectAnswers === quiz.questions.length) {
             // reward users
             let transferArgs = {
@@ -187,7 +185,6 @@ export default Canister({
                 memo: None,
                 created_at_time: Some(ic.time()),
             };
-            // to implement checks and handle insufficient funds issues
             const transfer = await ic.call(icrc.icrc1_transfer, {
                 args: [transferArgs],
             });

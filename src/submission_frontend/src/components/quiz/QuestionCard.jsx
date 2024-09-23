@@ -1,17 +1,14 @@
 import React, { useState } from "react";
-import { toast } from "react-toastify";
 
-function QuestionCard({ question, options, correctAnswer, questionId, over, updateAnswers }) {
-  const [selectedOption, setSelectedOption] = useState("");
+function QuestionCard({ question, options, correctAnswer, questionId, over, updateAnswers, userAnswer }) {
+  const [selectedOption, setSelectedOption] = useState(userAnswer.answer || "");
   const handleOnClick = (e, option) => {
     if (over) {
       return;
     }
-    setSelectedOption(option.id);
-    console.log(option.id)
+    setSelectedOption(option.id)
     updateAnswers(questionId, option.id)
   };
-
   const renderOptions = () => {
     return (
       <ul className="space-y-3">

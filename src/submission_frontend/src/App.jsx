@@ -98,6 +98,27 @@ function App() {
       setLoading(false);
     }
   };
+  const playAgain = async () => {
+    try {
+      if (!quiz.over) {
+        toast.warn("Quiz isn't over.", {
+          className: "bg-[#e0ebeb] text-[#2c3e50] p-4 rounded-lg shadow-lg",
+        });
+        return;
+      }
+      setLoading(true);
+      setQuiz([]);
+      setAnswers([])
+      setPlaying(false)
+    } catch (error) {
+      console.log({ error });
+      toast(
+        <NotificationError text={`Failed to play again. ${error.message}`} />
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
   const fetchAccount = useCallback(async () => {
     try {
       const isRegistered = await hasAccount();
@@ -132,10 +153,7 @@ function App() {
   }, [getBalance]);
 
   const updateAnswers = (questionId, selectedOption) => {
-    console.log(questionId, selectedOption);
     const exists = answers.findIndex((answer) => answer.id === questionId);
-    console.log("exists", exists);
-    console.log(answers);
     if (exists > -1) {
       setAnswers((prevAnswers) =>
         prevAnswers.map((answer) =>
@@ -184,6 +202,8 @@ function App() {
               over={quiz.over}
               updateAnswers={updateAnswers}
               endQuiz={endQuiz}
+              playAgain={playAgain}
+              answers={answers}
             /> // Render the quiz if playing
           ) : (
             <QuizForm createQuiz={createQuiz} /> // Render the form if not playing
