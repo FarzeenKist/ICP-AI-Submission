@@ -27,14 +27,14 @@ Before you begin, ensure you have the following installed:
   ```bash
   npm install -g yarn
   ```
-- **DFX**: Version 0.20.0
+- **DFX**: Version 0.20.0. You can download it from [here](https://internetcomputer.org/docs/current/developer-docs/getting-started/install/)
 
-   - Make sure to verify the installation by checking the versions:
-      ```bash
-      node --version
-      yarn --version
-      dfx --version
-   ```
+- Make sure to verify the installation by checking the versions:
+  ```bash
+  node --version
+  yarn --version
+  dfx --version
+  ```
 
 ## Getting Started
 
