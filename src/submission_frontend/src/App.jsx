@@ -133,7 +133,6 @@ function App() {
   const fetchAccount = useCallback(async () => {
     try {
       const isRegistered = await hasAccount();
-      console.log(isRegistered);
       if (isRegistered) {
         setAccount(await getAccount());
       } else {
@@ -154,11 +153,10 @@ function App() {
   });
 
   useEffect(() => {
-    fetchAccount();
+    if(isLoggedIn){
+      fetchAccount();
+    }
   }, [isLoggedIn]);
-  useEffect(() => {
-    console.log(account);
-  }, [account]);
   useEffect(() => {
     getBalance();
   }, [getBalance]);
@@ -183,12 +181,11 @@ function App() {
     }
   };
 
-  useEffect(() => {
-    console.log("Answers updated:", answers);
-  }, [answers]);
 
   useEffect(() => {
-    fetchAccount();
+    if(quiz && isLoggedIn){
+      fetchAccount();
+    }
   }, [quiz]);
 
   return (
